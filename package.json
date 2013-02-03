@@ -1,0 +1,22 @@
+{
+  "name": "grunt-importsrc",
+  "version": "0.0.1",
+  "description": "ERROR: No README.md file found!",
+  "author": "Antoine Lehurt <keuwah@gmail.com>",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kewah/grunt-importsrc.git"
+  },
+  "keywords": [
+    "gruntplugin"
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {  }
+}
