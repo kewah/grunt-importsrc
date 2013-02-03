@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>grunt-importsrc</title>
+
+  <!-- importsrc concat:temp/styles/importsrcs-concat_output.css -->
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endimportsrc -->
+
+  <!-- importsrc
+    update:mincss.compress.src
+    replace:temp/styles/mincss_output.css -->
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endimportsrc -->
+</head>
+<body>
+
+  <h1>Hello world</h1>
+
+  <!-- importsrc concat:temp/scripts/importsrcs-concat_output.js -->
+  <script src="scripts/vendors/plugin.js"></script>
+  <script src="scripts/file-1.js"></script>
+  <script src="scripts/file-2.js"></script>
+  <!-- endimportsrc -->
+
+  <!--
+    importsrc
+    update:uglify.dist.files['temp/scripts/uglify_output.js']
+    replace:temp/scripts/uglify_output.js
+  -->
+  <script src="scripts/vendors/plugin.js"></script>
+  <script src="scripts/file-1.js"></script>
+  <script src="scripts/file-2.js"></script>
+  <!-- endimportsrc -->
+
+</body>
+</html>
