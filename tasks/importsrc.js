@@ -10,7 +10,7 @@
 
 module.exports = function(grunt) {
 
-  grunt.registerMultiTask('importsrc', 'Import scripts and stylesheets sources from HTML files', function() {
+  grunt.registerMultiTask('importsrc', 'Import file paths of scripts and stylesheets from HTML files', function() {
 
   });
 

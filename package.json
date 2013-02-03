@@ -1,7 +1,7 @@
 {
   "name": "grunt-importsrc",
   "version": "0.0.1",
-  "description": "ERROR: No README.md file found!",
+  "description": "Import file paths of scripts and stylesheets from HTML files",
   "author": "Antoine Lehurt <keuwah@gmail.com>",
   "main": "Gruntfile.js",
   "scripts": {
