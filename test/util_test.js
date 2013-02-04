@@ -50,10 +50,10 @@ exports.util = {
       '<link rel="stylesheet" href="styles/two.css">' +
       '<!-- endimportsrc -->';
 
-    var expected = ['concat:path/to/smth.css'];
+    var expected = 'path/to/smth.css';
     var actual = util.extractConcatParam(section);
 
-    test.deepEqual(actual, expected, 'should extract `concat` param value');
+    test.equal(actual, expected, 'should extract `concat` param value');
 
     test.done();
   },
@@ -66,15 +66,15 @@ exports.util = {
       '<script src="scripts/file-2.js"></script>' +
       '<!-- endimportsrc -->';
 
-    var expected = ['update:uglify.dist.files["smth"]'];
+    var expected = 'uglify.dist.files["smth"]';
     var actual = util.extractUpdateParam(section);
 
-    test.deepEqual(actual, expected, 'should extract `update` param value');
+    test.equal(actual, expected, 'should extract `update` param value');
 
-    expected = ['replace:path/to/smth.js'];
+    expected = 'path/to/smth.js';
     actual = util.extractReplaceParam(section);
 
-    test.deepEqual(actual, expected, 'should extract `replace` param value');
+    test.equal(actual, expected, 'should extract `replace` param value');
 
     test.done();
   },

@@ -95,13 +95,11 @@ module.exports = function(grunt) {
   /**
    * Concatenates files present in a section.
    * @param  {String} section
-   * @param  {Array} concatParam
+   * @param  {String} concatDest
    * @return {String}             The output file path.
    */
 
-  function concatSourceFiles(section, concatParam) {
-    var concatDest = concatParam[0].split(':')[1];
-
+  function concatSourceFiles(section, concatDest) {
     // extract file paths that will be read and concatenated.
     var sources = util.extractFilePaths(section, util.getFileExtension(concatDest)).map(addRootPathTo).filter(function(filepath) {
       if (!grunt.file.exists(filepath)) {
