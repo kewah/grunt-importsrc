@@ -125,5 +125,33 @@ exports.util = {
     test.deepEqual(actual, expected, 'should return an empty array');
 
     test.done();
+  },
+
+  containsBrackets: function(test) {
+    test.expect(2);
+
+    test.ok(util.containsBrackets('path.to["smth"]'), 'should detect brackets');
+    test.equal(util.containsBrackets('path.to.smth'), false, 'should not detect brackets');
+
+    test.done();
+  },
+
+  extractValueInsideBrackets: function(test) {
+    test.expect(3);
+
+    test.deepEqual(util.extractValueInsideBrackets('path.to["smth"]'), ['smth'], 'should return the value inside brackets');
+    test.deepEqual(util.extractValueInsideBrackets('path.to["smth"]["else"]'), ['smth', 'else'], 'should return values inside brackets');
+    test.deepEqual(util.extractValueInsideBrackets('path.to.smth'), [], 'should return an empty array');
+
+    test.done();
+  },
+
+  removeBrackets: function(test) {
+    test.expect(2);
+
+    test.equal(util.removeBrackets('path.to["smth"]'), 'path.to', 'should remove brackets');
+    test.equal(util.removeBrackets('path.to["smth"]["else"]'), 'path.to', 'should remove brackets');
+
+    test.done();
   }
 };
