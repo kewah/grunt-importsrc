@@ -200,6 +200,8 @@ module.exports = function(grunt) {
     var updatedTask = _.union(taskData[taskDestFile], sources);
 
     updateGruntTaskMessage(taskToUpdate, taskData[taskDestFile], updatedTask);
+
+    cfg.obj[cfg.lastProp][taskDestFile] = updatedTask;
   }
 
   function updateGruntTaskWithFullFormat(section, taskToUpdate, destFileExtension) {
@@ -215,6 +217,8 @@ module.exports = function(grunt) {
     var updatedTask = _.union(taskData, sources);
 
     updateGruntTaskMessage(taskToUpdate, taskData, updatedTask);
+
+    cfg.obj[cfg.lastProp] = updatedTask;
   }
 
   /**
