@@ -54,7 +54,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-mincss');
 
-  grunt.registerTask('test', ['clean', 'importsrc'/*, 'nodeunit'*/]);
+  grunt.registerTask('test', ['clean', 'importsrc', 'nodeunit']);
 
   grunt.registerTask('default', ['jshint', 'test']);
 };
