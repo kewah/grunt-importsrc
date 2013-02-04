@@ -95,7 +95,7 @@ module.exports = function(grunt) {
   function concatSourceFiles(section, concatParam) {
     var concatDest = concatParam[0].split(':')[1];
 
-    var sources = util.extractSources(section, util.getFileExtension(concatDest)).map(addRootPathTo).filter(function(filepath) {
+    var sources = util.extractFilePaths(section, util.getFileExtension(concatDest)).map(addRootPathTo).filter(function(filepath) {
       if (!grunt.file.exists(filepath)) {
         grunt.log.warn('Source file "' + filepath + '" not found.');
         return false;
