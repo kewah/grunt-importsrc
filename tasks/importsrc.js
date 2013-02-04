@@ -76,7 +76,7 @@ module.exports = function(grunt) {
         return;
       }
 
-      // replace content
+      // replace section with the output file path.
       var extension = util.getFileExtension(outputFilepath);
       var replacement;
 
@@ -92,9 +92,17 @@ module.exports = function(grunt) {
     return content;
   }
 
+  /**
+   * Concatenates files present in a section.
+   * @param  {String} section
+   * @param  {Array} concatParam
+   * @return {String}             The output file path.
+   */
+
   function concatSourceFiles(section, concatParam) {
     var concatDest = concatParam[0].split(':')[1];
 
+    // extract file paths that will be read and concatenated.
     var sources = util.extractFilePaths(section, util.getFileExtension(concatDest)).map(addRootPathTo).filter(function(filepath) {
       if (!grunt.file.exists(filepath)) {
         grunt.log.warn('Source file "' + filepath + '" not found.');
