@@ -34,6 +34,11 @@ module.exports = function(grunt) {
           ]
         }
       },
+      example: {
+        files: {
+          'example/dist/min.js': []
+        }
+      },
       options: {
         mangle: true
       }
@@ -55,6 +60,11 @@ module.exports = function(grunt) {
           'test/fixtures/styles/main.css'
         ],
         dest: 'test/expected/styles/mincss_output.css'
+      },
+      example: {
+        files: {
+          'example/dist/min.css': []
+        }
       }
     },
 
@@ -62,6 +72,11 @@ module.exports = function(grunt) {
       test: {
         files: {
           'temp/index.html': 'test/fixtures/index.html',
+        }
+      },
+      example: {
+        files: {
+          'example/dist/index.html': 'example/index.html'
         }
       }
     }
@@ -76,10 +91,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-mincss');
 
-  grunt.registerTask('test', ['clean', 'expected', 'importsrc', 'uglify:test', 'mincss:test', 'mincss:test_without_dest','nodeunit']);
+  grunt.registerTask('test', ['clean', 'expected', 'importsrc:test', 'uglify:test', 'mincss:test', 'mincss:test_without_dest','nodeunit']);
 
   // build expected files to check if the `updatesrc:update` is working.
   grunt.registerTask('expected', ['uglify:expected', 'mincss:expected']);
+
+  // build example files
+  grunt.registerTask('example', ['importsrc:example', 'uglify:example', 'mincss:example']);
 
   grunt.registerTask('default', ['jshint', 'test']);
 };
