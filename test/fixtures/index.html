@@ -16,7 +16,7 @@
 
   <!-- importsrc
     update:mincss.test_without_dest.src
-    replace:temp/styles/mincss_without_dest_output.css -->
+    dest:temp/styles/mincss_without_dest_output.css -->
   <link rel="stylesheet" href="styles/input.css">
   <link rel="stylesheet" href="styles/reset.css">
   <link rel="stylesheet" href="styles/main.css">
@@ -26,7 +26,9 @@
 
   <h1>Hello world</h1>
 
-  <!-- importsrc concat:temp/scripts/importsrcs-concat_output.js -->
+  <!-- importsrc
+    concat:temp/scripts/importsrcs-concat_output.js
+    replace:test_fake_replace_path.js -->
   <script src="scripts/vendors/plugin.js"></script>
   <script src="scripts/file-1.js"></script>
   <script src="scripts/file-2.js"></script>

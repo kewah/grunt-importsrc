@@ -17,6 +17,8 @@ module.exports = function(grunt) {
 
   // relative path to the html file
   var htmlRootPath;
+  // relative path to the generated html file.
+  var htmlDestRootPath;
 
   /**
    * Add the HTML root path to a file path.
@@ -24,7 +26,7 @@ module.exports = function(grunt) {
    * @return {String}           htmlRootPath + filepath
    */
 
-  function addRootPathTo(filepath) {
+  function addRootPath(filepath) {
     return path.join(htmlRootPath, filepath);
   }
 
@@ -61,6 +63,8 @@ module.exports = function(grunt) {
         return;
       }
 
+      htmlDestRootPath = file.dest.replace(/[^\/]*$/, '');
+
       var html = file.src.map(extractDataFromHTML);
       grunt.file.write(file.dest, html);
     });
@@ -90,6 +94,8 @@ module.exports = function(grunt) {
     sections.forEach(function(section) {
       var concatParam = util.extractConcatParam(section);
       var updateParam = util.extractUpdateParam(section);
+      var replaceParam = util.extractReplaceParam(section);
+      var destParam = util.extractDestParam(section);
       var outputFilepath;
 
       if (concatParam) {
@@ -97,8 +103,12 @@ module.exports = function(grunt) {
       }
 
       if (updateParam) {
-        outputFilepath = updateGruntTask(section, updateParam);
+        outputFilepath = updateGruntTask(section, updateParam, destParam);
       }
+
+      // we get the relative path between the generated html file and the generated js|css file.
+      // ex: src/index.html and src/script/file.js -> script/file.js
+      outputFilepath = replaceParam || path.relative(htmlDestRootPath, outputFilepath);
 
       // replace section with the output file path.
       var extension = util.getFileExtension(outputFilepath);
@@ -125,7 +135,7 @@ module.exports = function(grunt) {
 
   function concatSourceFiles(section, concatDest) {
     // extract file paths that will be read and concatenated.
-    var sources = util.extractFilePaths(section, util.getFileExtension(concatDest)).map(addRootPathTo).filter(function(filepath) {
+    var sources = util.extractFilePaths(section, util.getFileExtension(concatDest)).map(addRootPath).filter(function(filepath) {
       if (!grunt.file.exists(filepath)) {
         grunt.log.warn('Source file "' + filepath + '" not found.');
         return false;
@@ -152,24 +162,26 @@ module.exports = function(grunt) {
    * Update an existing Grunt task (like uglify, mincss, etc.)
    * @param  {String} section
    * @param  {String} taskToUpdate
+   * @param  {String} destParam
    * @return {String}              The output file path.
    */
 
-  function updateGruntTask(section, taskToUpdate) {
-    var replaceFilepath = util.extractReplaceParam(section);
+  function updateGruntTask(section, taskToUpdate, destParam) {
     var destFilepath;
 
     // Grunt has different syntax format for config of tasks (see https://github.com/gruntjs/grunt/wiki/grunt)
+    //
     // - compact & list: 'dist/built.js': ['src/file1.js', 'src/file2.js']
     //    ex: uglify.dist.files['dist/built.js'] (<= brackets) return ['src/file1.js', 'src/file2.js']
+    //
     // - full: env: {src: ['src/file1.css', 'src/file2.css'], dest: ... }
     //    ex: mincss.compress.src (<= no brackets) return ['src/file1.css', 'src/file2.css']
     //
     // To detect those different formats, I just check if there are brackets in the `taskToUpdate` value.
     if (util.containsBrackets(taskToUpdate)) {
-      destFilepath = updateGruntTaskWithCompactFormat(section, taskToUpdate, replaceFilepath);
+      destFilepath = updateGruntTaskWithCompactFormat(section, taskToUpdate, destParam);
     } else {
-      destFilepath = updateGruntTaskWithFullFormat(section, taskToUpdate, replaceFilepath);
+      destFilepath = updateGruntTaskWithFullFormat(section, taskToUpdate, destParam);
     }
 
     return destFilepath;
@@ -179,11 +191,11 @@ module.exports = function(grunt) {
    * Update a task with the "compact" format syntax.
    * @param  {String} section
    * @param  {String} taskToUpdate
-   * @param  {String} replaceFilepath
+   * @param  {String} destFilepath
    * @return {String}                 output file path
    */
 
-  function updateGruntTaskWithCompactFormat(section, taskToUpdate, replaceFilepath) {
+  function updateGruntTaskWithCompactFormat(section, taskToUpdate, destFilepath) {
     var insideBrackets = util.extractValueInsideBrackets(taskToUpdate);
     var cfg = stringToGruntConfigObject(util.removeBrackets(taskToUpdate));
     var taskData = cfg.obj[cfg.lastProp];
@@ -199,7 +211,7 @@ module.exports = function(grunt) {
       taskData = taskData[prop];
     });
 
-    taskDestFile = taskDestFile || replaceFilepath;
+    taskDestFile = taskDestFile || destFilepath;
     destFileExtension = util.getFileExtension(taskDestFile);
 
     // In case the dest file of the task that you want to update is not defined in the Grunt config.
@@ -209,11 +221,12 @@ module.exports = function(grunt) {
     }
 
     // extract file paths from the html to add it to the task that we are updating.
-    var sources = util.extractFilePaths(section, destFileExtension).map(addRootPathTo);
+    var sources = util.extractFilePaths(section, destFileExtension).map(addRootPath);
     var updatedTask = _.union(taskData[taskDestFile], sources);
 
     updateGruntTaskMessage(taskToUpdate, taskData[taskDestFile], updatedTask);
 
+    // update the task
     cfg.obj[cfg.lastProp][taskDestFile] = updatedTask;
 
     return taskDestFile;
@@ -223,38 +236,37 @@ module.exports = function(grunt) {
    * Update a task with the "full" format syntax.
    * @param  {String} section
    * @param  {String} taskToUpdate
-   * @param  {String} replaceFilepath
+   * @param  {String} destFilepath
    * @return {String}                 output file path
    */
 
-  function updateGruntTaskWithFullFormat(section, taskToUpdate, replaceFilepath) {
+  function updateGruntTaskWithFullFormat(section, taskToUpdate, destFilepath) {
     var cfg = stringToGruntConfigObject(taskToUpdate);
     var taskData = cfg.obj[cfg.lastProp];
-    var destFilepath = cfg.obj['dest'];
+
+    if (destFilepath) {
+      cfg.obj['dest'] = destFilepath
+    } else {
+      destFilepath = cfg.obj['dest'];
+    }
 
     if (!taskData) {
       taskData = cfg.obj[cfg.lastProp] = [];
     }
 
     if (!destFilepath) {
-      // The task that you want to update don't have a `dest` file.
-      // We use the `replace` param value.
-      if (!replaceFilepath) {
-        grunt.fail.fatal('Can\'t find the "dest" value of the task option update:' + taskToUpdate + ' \n You have to specify the "replace" option.');
-      }
-
-      destFilepath = replaceFilepath;
-      cfg.obj['dest'] = destFilepath;
+      grunt.fail.fatal('Can\'t find the "dest" value of the task option update:' + taskToUpdate + ' \n You have to specify the "dest" option.');
     }
 
     var destFileExtension = util.getFileExtension(destFilepath);
 
     // extract file paths from the html to add it to the task that we are updating.
-    var sources = util.extractFilePaths(section, destFileExtension).map(addRootPathTo);
+    var sources = util.extractFilePaths(section, destFileExtension).map(addRootPath);
     var updatedTask = _.union(taskData, sources);
 
     updateGruntTaskMessage(taskToUpdate, taskData, updatedTask);
 
+    // update the task
     cfg.obj[cfg.lastProp] = updatedTask;
 
     return destFilepath;
