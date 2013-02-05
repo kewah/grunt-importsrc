@@ -156,8 +156,8 @@ module.exports = function(grunt) {
    */
 
   function updateGruntTask(section, taskToUpdate) {
-    var destFilepath = util.extractReplaceParam(section);
-    var destFileExtension = util.getFileExtension(destFilepath);
+    var replaceFilepath = util.extractReplaceParam(section);
+    var destFilepath;
 
     // Grunt has different syntax format for config of tasks (see https://github.com/gruntjs/grunt/wiki/grunt)
     // - compact & list: 'dist/built.js': ['src/file1.js', 'src/file2.js']
@@ -167,19 +167,27 @@ module.exports = function(grunt) {
     //
     // To detect those different formats, I just check if there are brackets in the `taskToUpdate` value.
     if (util.containsBrackets(taskToUpdate)) {
-      updateGruntTaskWithCompactFormat(section, taskToUpdate, destFileExtension);
+      destFilepath = updateGruntTaskWithCompactFormat(section, taskToUpdate, replaceFilepath);
     } else {
-      updateGruntTaskWithFullFormat(section, taskToUpdate, destFileExtension);
+      destFilepath = updateGruntTaskWithFullFormat(section, taskToUpdate, replaceFilepath);
     }
 
     return destFilepath;
   }
 
-  function updateGruntTaskWithCompactFormat(section, taskToUpdate, destFileExtension) {
+  /**
+   * Update a task with the "compact" format syntax.
+   * @param  {String} section
+   * @param  {String} taskToUpdate
+   * @param  {String} replaceFilepath
+   * @return {String}                 output file path
+   */
+
+  function updateGruntTaskWithCompactFormat(section, taskToUpdate, replaceFilepath) {
     var insideBrackets = util.extractValueInsideBrackets(taskToUpdate);
     var cfg = stringToGruntConfigObject(util.removeBrackets(taskToUpdate));
     var taskData = cfg.obj[cfg.lastProp];
-    var taskDestFile;
+    var taskDestFile, destFileExtension;
 
     // get the last prop of the object to be able to update it after.
     insideBrackets.forEach(function(prop, i) {
@@ -191,6 +199,11 @@ module.exports = function(grunt) {
       taskData = taskData[prop];
     });
 
+    taskDestFile = taskDestFile || replaceFilepath;
+    destFileExtension = util.getFileExtension(taskDestFile);
+
+    // In case the dest file of the task that you want to update is not defined in the Grunt config.
+    // Should not happen...
     if (!taskData[taskDestFile]) {
       taskData[taskDestFile] = [];
     }
@@ -202,15 +215,39 @@ module.exports = function(grunt) {
     updateGruntTaskMessage(taskToUpdate, taskData[taskDestFile], updatedTask);
 
     cfg.obj[cfg.lastProp][taskDestFile] = updatedTask;
+
+    return taskDestFile;
   }
 
-  function updateGruntTaskWithFullFormat(section, taskToUpdate, destFileExtension) {
+  /**
+   * Update a task with the "full" format syntax.
+   * @param  {String} section
+   * @param  {String} taskToUpdate
+   * @param  {String} replaceFilepath
+   * @return {String}                 output file path
+   */
+
+  function updateGruntTaskWithFullFormat(section, taskToUpdate, replaceFilepath) {
     var cfg = stringToGruntConfigObject(taskToUpdate);
     var taskData = cfg.obj[cfg.lastProp];
+    var destFilepath = cfg.obj['dest'];
 
     if (!taskData) {
       taskData = cfg.obj[cfg.lastProp] = [];
     }
+
+    if (!destFilepath) {
+      // The task that you want to update don't have a `dest` file.
+      // We use the `replace` param value.
+      if (!replaceFilepath) {
+        grunt.fail.fatal('Can\'t find the "dest" value of the task option update:' + taskToUpdate + ' \n You have to specify the "replace" option.');
+      }
+
+      destFilepath = replaceFilepath;
+      cfg.obj['dest'] = destFilepath;
+    }
+
+    var destFileExtension = util.getFileExtension(destFilepath);
 
     // extract file paths from the html to add it to the task that we are updating.
     var sources = util.extractFilePaths(section, destFileExtension).map(addRootPathTo);
@@ -219,6 +256,8 @@ module.exports = function(grunt) {
     updateGruntTaskMessage(taskToUpdate, taskData, updatedTask);
 
     cfg.obj[cfg.lastProp] = updatedTask;
+
+    return destFilepath;
   }
 
   /**
