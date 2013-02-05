@@ -71,7 +71,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-mincss');
 
-  grunt.registerTask('test', ['clean', 'importsrc', 'uglify:test', 'mincss:test','nodeunit']);
+  grunt.registerTask('test', ['clean', 'expected', 'importsrc', 'uglify:test', 'mincss:test','nodeunit']);
 
   // build expected files to check if the `updatesrc:update` is working.
   grunt.registerTask('expected', ['uglify:expected', 'mincss:expected']);
