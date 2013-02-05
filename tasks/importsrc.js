@@ -245,7 +245,7 @@ module.exports = function(grunt) {
     var taskData = cfg.obj[cfg.lastProp];
 
     if (destFilepath) {
-      cfg.obj['dest'] = destFilepath
+      cfg.obj['dest'] = destFilepath;
     } else {
       destFilepath = cfg.obj['dest'];
     }

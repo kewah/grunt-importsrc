@@ -34,7 +34,7 @@ exports.util = {
   },
 
   extractSectionOption: function(test) {
-    test.expect(1)
+    test.expect(1);
 
     var section = '<!-- importsrc test:path/to/smth.css --><!-- endimportsrc -->';
 
