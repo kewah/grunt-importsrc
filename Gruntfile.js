@@ -43,6 +43,11 @@ module.exports = function(grunt) {
         src: ['test/fixtures/styles/input.css'],
         dest: 'temp/styles/mincss_output.css'
       },
+      // To test the replace option.
+      // not recommended to use this format.
+      test_without_dest: {
+        src: []
+      },
       expected: {
         src: [
           'test/fixtures/styles/input.css',
@@ -71,7 +76,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-mincss');
 
-  grunt.registerTask('test', ['clean', 'expected', 'importsrc', 'uglify:test', 'mincss:test','nodeunit']);
+  grunt.registerTask('test', ['clean', 'expected', 'importsrc', 'uglify:test', 'mincss:test', 'mincss:test_without_dest','nodeunit']);
 
   // build expected files to check if the `updatesrc:update` is working.
   grunt.registerTask('expected', ['uglify:expected', 'mincss:expected']);

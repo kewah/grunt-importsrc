@@ -31,7 +31,7 @@ exports.importsrc = {
   },
 
   update: function(test) {
-    test.expect(2);
+    test.expect(3);
 
     var actual = grunt.file.read('temp/scripts/uglify_output.js');
     var expected = grunt.file.read('test/expected/scripts/uglify_output.js');
@@ -42,6 +42,11 @@ exports.importsrc = {
     expected = grunt.file.read('test/expected/styles/mincss_output.css');
 
     test.equal(actual, expected, 'should update mincss config');
+
+    actual = grunt.file.read('temp/styles/mincss_without_dest_output.css');
+    expected = grunt.file.read('test/expected/styles/mincss_output.css');
+
+    test.equal(actual, expected, 'should update mincss "without dest" config');
 
     test.done();
   }
