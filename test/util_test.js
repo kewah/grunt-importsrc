@@ -20,21 +20,12 @@ exports.util = {
   extractSectionsData: function(test) {
     test.expect(1);
 
-    var sections = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
-      '<!-- importsrc concat:path/to/smth.css -->' +
-      '<link rel="stylesheet" href="styles/one.css">' +
-      '<link rel="stylesheet" href="styles/two.css">' +
-      '<!-- endimportsrc -->' +
-      '<!-- importsrc update:uglify.dist.files["smth"] replace:path/to/smth.js -->' +
-      '<script src="scripts/file-1.js"></script>' +
-      '<script src="scripts/file-2.js"></script>' +
-      '<!-- endimportsrc -->' +
-      '</head><body></body></html>';
+    var sections = '<!DOCTYPE html><html><head><meta charset="utf-8">' + '<!-- importsrc concat:path/to/smth.css -->' + '<link rel="stylesheet" href="styles/one.css">' + '<link rel="stylesheet" href="styles/two.css">' + '<!-- endimportsrc -->' + '<!-- importsrc update:uglify.dist.files["smth"] replace:path/to/smth.js -->' + '<script src="scripts/file-1.js"></script>' + '<script src="scripts/file-2.js"></script>' + '<!-- endimportsrc -->' + '</head><body></body></html>';
 
     var expected = [
       '<!-- importsrc concat:path/to/smth.css --><link rel="stylesheet" href="styles/one.css"><link rel="stylesheet" href="styles/two.css"><!-- endimportsrc -->',
       '<!-- importsrc update:uglify.dist.files["smth"] replace:path/to/smth.js --><script src="scripts/file-1.js"></script><script src="scripts/file-2.js"></script><!-- endimportsrc -->'
-    ];
+      ];
     var actual = util.extractSectionsData(sections);
 
     test.deepEqual(actual, expected, 'should extract `importsrc` sections');
@@ -42,39 +33,15 @@ exports.util = {
     test.done();
   },
 
-  extractConcatParam: function(test) {
-    test.expect(1);
+  extractSectionOption: function(test) {
+    test.expect(1)
 
-    var section = '<!-- importsrc concat:path/to/smth.css -->' +
-      '<link rel="stylesheet" href="styles/one.css">' +
-      '<link rel="stylesheet" href="styles/two.css">' +
-      '<!-- endimportsrc -->';
+    var section = '<!-- importsrc test:path/to/smth.css --><!-- endimportsrc -->';
 
     var expected = 'path/to/smth.css';
-    var actual = util.extractConcatParam(section);
+    var actual = util.extractSectionOption(section, 'test');
 
-    test.equal(actual, expected, 'should extract `concat` param value');
-
-    test.done();
-  },
-
-  extractUpdateParamAndReplace: function(test) {
-    test.expect(2);
-
-    var section = '<!-- importsrc update:uglify.dist.files["smth"] replace:path/to/smth.js -->' +
-      '<script src="scripts/file-1.js"></script>' +
-      '<script src="scripts/file-2.js"></script>' +
-      '<!-- endimportsrc -->';
-
-    var expected = 'uglify.dist.files["smth"]';
-    var actual = util.extractUpdateParam(section);
-
-    test.equal(actual, expected, 'should extract `update` param value');
-
-    expected = 'path/to/smth.js';
-    actual = util.extractReplaceParam(section);
-
-    test.equal(actual, expected, 'should extract `replace` param value');
+    test.equal(actual, expected, 'should extract `test` param value');
 
     test.done();
   },
@@ -103,16 +70,14 @@ exports.util = {
   extractFilePaths: function(test) {
     test.expect(3);
 
-    var section = '<script src="scripts/file-1.js"></script>' +
-      '<script src="scripts/file-2.js"></script>';
+    var section = '<script src="scripts/file-1.js"></script>' + '<script src="scripts/file-2.js"></script>';
 
     var expected = ['scripts/file-1.js', 'scripts/file-2.js'];
     var actual = util.extractFilePaths(section, '.js');
 
     test.deepEqual(actual, expected, 'should return js file paths');
 
-    section = '<link rel="stylesheet" href="styles/one.css">' +
-      '<link rel="stylesheet" href="styles/two.css">';
+    section = '<link rel="stylesheet" href="styles/one.css">' + '<link rel="stylesheet" href="styles/two.css">';
 
     expected = ['styles/one.css', 'styles/two.css'];
     actual = util.extractFilePaths(section, '.css');

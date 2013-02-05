@@ -90,25 +90,24 @@ module.exports = function(grunt) {
       return;
     }
 
-    // execute the task using the parameters defined in the HTML.
     sections.forEach(function(section) {
-      var concatParam = util.extractConcatParam(section);
-      var updateParam = util.extractUpdateParam(section);
-      var replaceParam = util.extractReplaceParam(section);
-      var destParam = util.extractDestParam(section);
+      var concatOpt = util.extractSectionOption(section, 'concat');
+      var updateOpt = util.extractSectionOption(section, 'update');
+      var replaceOpt = util.extractSectionOption(section, 'replace');
+      var destOpt = util.extractSectionOption(section, 'dest');
       var outputFilepath;
 
-      if (concatParam) {
-        outputFilepath = concatSourceFiles(section, concatParam);
+      if (concatOpt) {
+        outputFilepath = concatSourceFiles(section, concatOpt);
       }
 
-      if (updateParam) {
-        outputFilepath = updateGruntTask(section, updateParam, destParam);
+      if (updateOpt) {
+        outputFilepath = updateGruntTask(section, updateOpt, destOpt);
       }
 
       // we get the relative path between the generated html file and the generated js|css file.
       // ex: src/index.html and src/script/file.js -> script/file.js
-      outputFilepath = replaceParam || path.relative(htmlDestRootPath, outputFilepath);
+      outputFilepath = replaceOpt || path.relative(htmlDestRootPath, outputFilepath);
 
       // replace section with the output file path.
       var extension = util.getFileExtension(outputFilepath);
@@ -162,11 +161,11 @@ module.exports = function(grunt) {
    * Update an existing Grunt task (like uglify, mincss, etc.)
    * @param  {String} section
    * @param  {String} taskToUpdate
-   * @param  {String} destParam
+   * @param  {String} destOpt
    * @return {String}              The output file path.
    */
 
-  function updateGruntTask(section, taskToUpdate, destParam) {
+  function updateGruntTask(section, taskToUpdate, destOpt) {
     var destFilepath;
 
     // Grunt has different syntax format for config of tasks (see https://github.com/gruntjs/grunt/wiki/grunt)
@@ -179,9 +178,9 @@ module.exports = function(grunt) {
     //
     // To detect those different formats, I just check if there are brackets in the `taskToUpdate` value.
     if (util.containsBrackets(taskToUpdate)) {
-      destFilepath = updateGruntTaskWithCompactFormat(section, taskToUpdate, destParam);
+      destFilepath = updateGruntTaskWithCompactFormat(section, taskToUpdate, destOpt);
     } else {
-      destFilepath = updateGruntTaskWithFullFormat(section, taskToUpdate, destParam);
+      destFilepath = updateGruntTaskWithFullFormat(section, taskToUpdate, destOpt);
     }
 
     return destFilepath;
@@ -211,6 +210,7 @@ module.exports = function(grunt) {
       taskData = taskData[prop];
     });
 
+    // If the 'dest' option is specified
     taskDestFile = taskDestFile || destFilepath;
     destFileExtension = util.getFileExtension(taskDestFile);
 
