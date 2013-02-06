@@ -3,7 +3,7 @@
 > Import scripts and stylesheets paths from HTML files into your Gruntfile.  
 > You can update an existing Grunt task like Uglify, mincss, etc. or just concatenate those imported files.
 
-If you are bored of having to copy and paste file paths of scripts or stylesheets from your HTML to your Gruntfile, this plugin can help you.
+If you are bored of having to copy and paste scripts (or stylesheets) files paths from your HTML to your Gruntfile, this plugin can help you.
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ importsrc: {
 }
 ```
 
-Into your HTML file (here `src/index.html`), add _importsrc_ sections with HTML comments.  
+In your HTML file (here `src/index.html`), add _importsrc_ sections with HTML comments. 
 You define _importsrc_ options in those comments (see below for more informations).
 
 ### Importsrc pattern
