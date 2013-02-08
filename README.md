@@ -1,4 +1,4 @@
-# grunt-importsrc
+# grunt-importsrc [![Build Status](https://travis-ci.org/kewah/grunt-importsrc.png?branch=master)](https://travis-ci.org/kewah/grunt-importsrc)
 
 > Import scripts and stylesheets paths from HTML files into your Gruntfile.  
 > You can update an existing Grunt task like Uglify, mincss, etc. or just concatenate those imported files.
