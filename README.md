@@ -270,7 +270,7 @@ Execute the command `grunt example` and see `example/` folder.
 
 ## Release History
 
-- 02/2013 - 0.1.0 - Initial release
+- 05/02/2013 - 0.1.0 - Initial release
 
 ## Contributing
 
