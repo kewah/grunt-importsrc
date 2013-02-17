@@ -1,6 +1,6 @@
 {
   "name": "grunt-importsrc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Import scripts and stylesheets paths from HTML files into your Gruntfile.",
   "author": "Antoine Lehurt <keuwah@gmail.com>",
   "main": "Gruntfile.js",
