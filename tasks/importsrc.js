@@ -27,6 +27,10 @@ module.exports = function(grunt) {
    */
 
   function addRootPath(filepath) {
+    if (filepath[0] === '/') {
+      return filepath.substring(1);
+    }
+
     return path.join(htmlRootPath, filepath);
   }
 
